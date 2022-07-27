@@ -19,23 +19,21 @@ describe("recommendations tests", () => {
 			youtubeLink: "https://www.youtube.com/watch?v=dGMB7oeIbqw",
 		};
 
-		const response = await agent.post("/").send(recommendation);
+		await agent.post("/recommendations").send(recommendation);
 
-		expect(response.status).toBe(201);
+		const recommendationCreated = await prisma.recommendation.findFirst({
+			where: {
+				name: recommendation.name,
+			},
+		});
 
-		// const recommendationCreated = await prisma.recommendation.findFirst({
-		// 	where: {
-		// 		name: recommendation.name,
-		// 	},
-		// });
-
-		// expect(recommendationCreated).not.toBeNull();
+		expect(recommendationCreated).not.toBeNull();
 	});
 
 	it("given an invalid req.body it should return status 422", async () => {
 		const recommendation = {};
 
-		const response = await agent.post("/").send(recommendation);
+		const response = await agent.post("/recommendations").send(recommendation);
 
 		expect(response.status).toEqual(422);
 	});
